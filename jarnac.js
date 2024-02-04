@@ -30,8 +30,8 @@ let sac = [
     ...Array(2).fill('Z')
 ];
 
-// class d'un joueur
 class Joueur {
+    // class d'un joueur
     constructor() {
         this.plateau = [];  
         this.lettres = [];
@@ -40,7 +40,7 @@ class Joueur {
     }
 
     is_valid(mot){
-        // verifier si un mot est valide
+        // verifier si un mot peut être placé sur le plateau avec les lettres disponibles
         mot = mot.toUpperCase();
 
         for (let i = 0; i < mot.length; i++) {
@@ -97,7 +97,7 @@ class Joueur {
             }
         }
         if (ancien_mot.length > 0) {
-            console.log('Vous ne pouvez pas remplacer ce mot car le mot que vous avez saisi ne contient pas toutes les lettres du mot que vous voulez remplacer.');
+            console.log('Vous ne pouvez pas remplacer ce mot : le mot saisi ne contient pas toutes les lettres du mot initial.');
             return false;
         }
         this.plateau[ligne-1] = mot;
@@ -107,7 +107,7 @@ class Joueur {
     }
 
     piocherLettres(n){
-        // piocher n lettres
+        // piocher n lettres aléatoirement dans le sac
         for (let i = 0; i < n; i++) {
             let index = Math.floor(Math.random() * sac.length);
             this.lettres.push(sac[index]);
@@ -125,16 +125,8 @@ class Joueur {
         }
     }
 
-    getStrLettres(){
-        // retourne les lettres sous forme de string
-        let lettres = '';
-        for (let i = 0; i < this.lettres.length; i++) {
-            lettres += this.lettres[i] + ' ';
-        }
-        return lettres;
-    }
-
     echangerLettres(lettres){
+        // échanger 3 de ses lettres avec 3 lettres du sac
         if (lettres.length === 3 && this.is_valid(lettres)) {
             for (let i = 0; i < 3; i++) {
                 let index = this.lettres.indexOf(lettres[i].toUpperCase());
@@ -152,6 +144,7 @@ class Joueur {
 }
 
 class Game {
+    // class du jeu Jarnac
     constructor() {
         this.joueurs = [];
         this.joueurs.push(new Joueur());
@@ -159,14 +152,15 @@ class Game {
     }
 
     afficherPlateaux(tour) {
+        // afficher les plateaux des joueurs 
         console.log('Voici le plateau du joueur 1 :');
         this.joueurs[0].afficherPlateau();
-        console.log('Voici vos lettres : ' + this.joueurs[0].getStrLettres());
+        console.log('Voici vos lettres : ' + this.joueurs[0].lettres.join(' '));
         console.log('Points : ' + this.joueurs[0].points + '\n');
 
         console.log('Voici le plateau du joueur 2 :');
         this.joueurs[1].afficherPlateau();
-        console.log('Voici vos lettres : ' + this.joueurs[1].getStrLettres());
+        console.log('Voici vos lettres : ' + this.joueurs[1].lettres.join(' '));
         console.log('Points : ' + this.joueurs[1].points + '\n');
 
         console.log('Joueur ' + (tour % 2 + 1) + ', c\'est à vous de jouer !\n');
@@ -201,6 +195,7 @@ class Game {
     }
 
     async run() {
+        // fonction principale du jeu Jarnac
         let fin = false;
         let tour = 0;
 
@@ -208,6 +203,7 @@ class Game {
         console.log('Bienvenue dans le jeu Jarnac !\n');
 
         while (!fin) {
+            //boucle principale du jeu : continue jusqu'à ce qu'un des joueurs ait 8 mots sur son plateau
             let joueur = this.joueurs[tour % 2];
             let jarnac = true;
             let tour_de_jeu = true;
@@ -215,8 +211,10 @@ class Game {
             let piocher = true;
 
             while (tour_de_jeu) {
+                // boucle de jeu : continue jusqu'à ce que le joueur passe
                 this.afficherPlateaux(tour);
                 
+                // on peut jarnac au début du tour dès le 2ème tour
                 if (jarnac && tour > 0) {
                     do {rep = await this.questionAsync('Voulez-vous Jarnac ? (Y/N) ')
                     } while (rep !== 'Y' && rep !== 'y' && rep !== 'N' && rep !== 'n');
@@ -229,7 +227,8 @@ class Game {
                         jarnac = false;
                     }
                 }
-
+                
+                // on peut choisir de piocher ou d'échanger des lettres dès le 2ème tour
                 if (tour > 1 && piocher) {
                     do {rep = await this.questionAsync('Voulez-vous piocher une lettre (P) ou bien échanger 3 de vos lettres avec 3 lettres du sac (E) ? ')
                     } while (rep !== 'P' && rep !== 'p' && rep !== 'E' && rep !== 'e');
@@ -252,6 +251,7 @@ class Game {
                     piocher = false;
                 }
 
+                // ici on place un mot, on change une ligne ou on passe
                 do {rep = await this.questionAsync('Que voulez-vous faire ? (Placer un mot : M; Changer une ligne : C; Passer : P) ')
                 } while (rep !== 'M' && rep !== 'm' && rep !== 'C' && rep !== 'c' && rep !== 'P' && rep !== 'p');
 
@@ -274,6 +274,7 @@ class Game {
                 console.clear();
             }
             if (this.joueurs[0].plateau.length === 8 || this.joueurs[1].plateau.length === 8) {
+                // fin de la partie si un des joueurs a 8 mots sur son plateau
                 fin = true;
             }
             tour++;
@@ -300,5 +301,6 @@ class Game {
     }
 }
 
+// lancer le jeu
 let game = new Game();
 game.run();
