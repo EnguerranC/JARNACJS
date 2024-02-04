@@ -158,7 +158,7 @@ class Game {
         this.joueurs.push(new Joueur());
     }
 
-    afficherPlateaux() {
+    afficherPlateaux(tour) {
         console.log('Voici le plateau du joueur 1 :');
         this.joueurs[0].afficherPlateau();
         console.log('Voici vos lettres : ' + this.joueurs[0].getStrLettres());
@@ -168,6 +168,8 @@ class Game {
         this.joueurs[1].afficherPlateau();
         console.log('Voici vos lettres : ' + this.joueurs[1].getStrLettres());
         console.log('Points : ' + this.joueurs[1].points + '\n');
+
+        console.log('Joueur ' + (tour % 2 + 1) + ', c\'est à vous de jouer !\n');
     }
 
     async jarnac(tour) {
@@ -191,7 +193,7 @@ class Game {
             voleur.points += mot.length**2;
 
             console.clear();
-            this.afficherPlateaux();
+            this.afficherPlateaux(tour);
 
             do { rep = await this.questionAsync('Voulez-vous voler un autre mot ? (Y/N) ');
             } while (rep !== 'Y' && rep !== 'y' && rep !== 'N' && rep !== 'n');
@@ -213,7 +215,7 @@ class Game {
 
             while (tour_de_jeu) {
                 console.log('C\'est au tour du joueur ' + (tour % 2 + 1) + ' !\n\n');
-                this.afficherPlateaux();
+                this.afficherPlateaux(tour);
                 
                 if (jarnac && tour > 0) {
                     do {rep = await this.questionAsync('Voulez-vous Jarnac ? (Y/N) ')
@@ -246,7 +248,7 @@ class Game {
                         }
                     }
                     console.clear();
-                    this.afficherPlateaux();
+                    this.afficherPlateaux(tour);
                 }
 
                 do {rep = await this.questionAsync('Que voulez-vous faire ? (Placer un mot : M; Changer une ligne : C; Passer : P) ')
@@ -270,7 +272,7 @@ class Game {
                 }
                 console.clear();
             }
-            if (joueurs[0].plateau.length === 8 || joueurs[1].plateau.length === 8) {
+            if (this.joueurs[0].plateau.length === 8 || this.joueurs[1].plateau.length === 8) {
                 fin = true;
             }
             tour++;
