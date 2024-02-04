@@ -212,9 +212,9 @@ class Game {
             let jarnac = true;
             let tour_de_jeu = true;
             let rep;
+            let piocher = true;
 
             while (tour_de_jeu) {
-                console.log('C\'est au tour du joueur ' + (tour % 2 + 1) + ' !\n\n');
                 this.afficherPlateaux(tour);
                 
                 if (jarnac && tour > 0) {
@@ -230,7 +230,7 @@ class Game {
                     }
                 }
 
-                if (tour > 1) {
+                if (tour > 1 && piocher) {
                     do {rep = await this.questionAsync('Voulez-vous piocher une lettre (P) ou bien échanger 3 de vos lettres avec 3 lettres du sac (E) ? ')
                     } while (rep !== 'P' && rep !== 'p' && rep !== 'E' && rep !== 'e');
 
@@ -249,6 +249,7 @@ class Game {
                     }
                     console.clear();
                     this.afficherPlateaux(tour);
+                    piocher = false;
                 }
 
                 do {rep = await this.questionAsync('Que voulez-vous faire ? (Placer un mot : M; Changer une ligne : C; Passer : P) ')
@@ -279,8 +280,8 @@ class Game {
             console.clear();
         }
         console.log('Fin de la partie !\n');
-        console.log('le juoueur 1 a fini avec ' + this.joueurs[0].points + ' points.');
-        console.log('le juoueur 2 a fini avec ' + this.joueurs[1].points + ' points.');
+        console.log('Le juoueur 1 a fini avec ' + this.joueurs[0].points + ' points.');
+        console.log('Le juoueur 2 a fini avec ' + this.joueurs[1].points + ' points.');
         console.log('Le gagnant est le joueur ' + (this.joueurs[0].points > this.joueurs[1].points ? 1 : 2) + ' !');
     }
 
